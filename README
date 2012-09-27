@@ -1,0 +1,3 @@
+A thing to monitor subreddits and send out emails (well, usually SMS messages) when something is posted.
+
+Uses ReddiWrap(https://github.com/derv82/reddiwrap)
