@@ -2,7 +2,7 @@ import requests, sys, os
 from xml.etree import ElementTree
 from time import sleep
 
-api_key = "3d001419c219690f14ce40f9679966ef"
+api_key = ""
 
 def get_download_url(track_id):
 	response_track = requests.get(
@@ -80,6 +80,9 @@ def download_track(track, folder=".", tries=0):
 
 	else:
 		sys.stdout.write("Downloading \"%s\"%s DOWNLOADS DISABLED"%(tempname, filler) )
+
+def fix_metadata(path, meta):
+	pass
 
 def main():
 	username = None
