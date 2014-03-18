@@ -5,7 +5,7 @@ import urllib
 import mutagen, mutagen.easyid3, mutagen.id3
 
 
-api_key = ""
+api_key = "3d001419c219690f14ce40f9679966ef"
 
 
 def get_track_info(track_id):
@@ -159,6 +159,8 @@ def main():
 	    os.makedirs(destination)
 
 	filepaths_and_meta = [download_track(track,destination) for track in tracklist]
+
+	print "\nDone"
 
 
 if __name__ == "__main__":
