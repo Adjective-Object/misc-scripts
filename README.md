@@ -5,6 +5,8 @@ A collection of one-off scripts & bots
 ## Scripts
  - [Soundcloud Discograhile](./script-soundcloud-dump):
     script to dump all of a user's public sounds on soundcloud
+ - [Inline Webfonts](./script-inline-webfonts):
+    script to download a stylesheet and inline webfonts as base64 data urls
 
 ## Bots
 Continuous processes and scripts meant to be run at regular
