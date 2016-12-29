@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+DEVICE_ID=15
+TRANSFORM_PROP_ID=140
+
+xrandr -o 
+
+xinput list-props
+
