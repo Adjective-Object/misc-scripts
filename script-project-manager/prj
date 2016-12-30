@@ -22,9 +22,24 @@ SCRIPT=$0
 PROJECT_NAME=''
 VERB=''
 CREATE_ENV=''
+NEEDS_PROJECT=true
 
 function usage () {
-    echo "usage"
+    echo "\
+usage: $SCRIPT [command] [command-flags] [project-name]
+
+  Manages a directory of projects under \$PROJECT_BASE_DIR, using
+  environment definitions provided by \$ENVIRONMENT_BASE_DIR
+
+  commands:
+    -c/create           create a new project
+    -l/list-env         list available environments in \$ENVIRONMENT_BASE_DIR
+    -o/open             open a project and, if it has a nix-shell, enter it
+
+  flags:
+    --env/-e            base environment to use when creating a new project
+
+"
 }
 
 function set_verb () {
@@ -34,6 +49,8 @@ function set_verb () {
         usage
         exit 1;
     fi
+
+    NEEDS_PROJECT=$2
 }
 
 if [ $# -eq 0 ]; then
@@ -44,10 +61,13 @@ fi
 while [ $# -gt 0 ]; do
     case $1 in
         -o|--open|open)
-            set_verb "open"
+            set_verb "open" true
             ;;
         -c|--create|create)
-            set_verb "create"
+            set_verb "create" true
+            ;;
+        -l|--list-env|list-env)
+            set_verb "list-env" false
             ;;
         -e|--env)
             # check that an arg was provided and error otherwise
@@ -71,7 +91,7 @@ while [ $# -gt 0 ]; do
     shift 1
 done
 
-if [ -z "$PROJECT_NAME" ]; then
+if [ "$NEEDS_PROJECT" == "true" ] && [ -z "$PROJECT_NAME" ]; then
     usage
     exit 1
 fi
@@ -108,7 +128,14 @@ function list_environments () {
     if [ ! -d $ENVIRONMENT_BASE_DIR ]; then
         echo "cannot find environments in $ENVIRONMENT_BASE_DIR"
     else
-        eval "ENVS=($(ls $ENVIRONMENT_BASE_DIR))"
+        eval "FILES=($(ls $ENVIRONMENT_BASE_DIR))"
+        declare -a ENVS
+        for f in $FILES; do
+            if [ -d $ENVIRONMENT_BASE_DIR/$f ]; then
+                ENVS[${#ENVS[@]}]=$f
+            fi
+        done
+ 
         if [ "0" == "${#ENVS[@]}" ]; then
             echo "no environments in $ENVIRONMENT_BASE_DIR"
         else
@@ -175,7 +202,10 @@ function verb_open () {
     fi
 }
 
-echo "$VERB project $PROJECT_NAME"
-"verb_"$VERB $PROJECT_NAME
+# list environments
+function verb_list-env() {
+    list_environments
+}
 
+"verb_"$VERB $PROJECT_NAME
 
