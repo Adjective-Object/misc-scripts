@@ -90,7 +90,7 @@ function project_exists () {
     return $([ -e $PROJECT_BASE_DIR/$1 ])
 }
 
-# checks if the project is a nix project 
+# checks if the project is a nix project
 function project_is_nix () {
     return $([ -e $PROJECT_BASE_DIR/$1/shell.nix ])
 }
@@ -106,7 +106,7 @@ function get_shell () {
 function list_environments () {
     if [ ! -d $ENVIRONMENT_BASE_DIR ]; then
         echo "cannot find environments in $ENVIRONMENT_BASE_DIR"
-    else 
+    else
         eval "ENVS=($(ls $ENVIRONMENT_BASE_DIR))"
         if [ "0" == "${#ENVS[@]}" ]; then
             echo "no environments in $ENVIRONMENT_BASE_DIR"
@@ -116,7 +116,6 @@ function list_environments () {
         fi
     fi
 }
-
 
 
 ####################
@@ -138,7 +137,7 @@ function verb_create () {
         list_environments
         exit 1
     fi
-    
+
     echo "creating project $1"
     mkdir -p $(project_dir $1)
 
