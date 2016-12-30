@@ -43,10 +43,10 @@ fi
 
 while [ $# -gt 0 ]; do
     case $1 in
-        -o|--open)
+        -o|--open|open)
             set_verb "open"
             ;;
-        -c|--create)
+        -c|--create|create)
             set_verb "create"
             ;;
         -e|--env)
@@ -87,7 +87,8 @@ fi
 
 # checks if the project folder exists
 function project_exists () {
-    return $([ -e $PROJECT_BASE_DIR/$1 ])
+    [ -d $PROJECT_BASE_DIR/$1 ]
+    return $?
 }
 
 # checks if the project is a nix project
@@ -112,7 +113,15 @@ function list_environments () {
             echo "no environments in $ENVIRONMENT_BASE_DIR"
         else
             echo "available environments are:"
-            echo ${ENVS[@]}
+            for env in ${ENVS[@]}; do
+                echo -n " - $env"
+                SHELL_FILE=$ENVIRONMENT_BASE_DIR/$env/shell.nix
+                if [ -f $SHELL_FILE ]; then
+                    PKG=`nix-env -qa -f $SHELL_FILE`
+                    echo -n " ($PKG)"
+                fi
+                echo
+            done
         fi
     fi
 }
@@ -152,7 +161,7 @@ function verb_create () {
 # verb_open [project_name]
 function verb_open () {
     project_exists $1
-    if [ ! $? ]; then
+    if [ 0 != $? ]; then
         echo "project '$1' does not exist"
         echo "try $SCRIPT -c $1"
         exit 1
