@@ -124,13 +124,14 @@ fi
 
 # checks if the project folder exists
 function project_exists () {
-    [ -d "$PROJECT_BASE_DIR/$1" ]
+    [ ! -d "$PROJECT_BASE_DIR/$1" ]
     return "$?"
 }
 
 # checks if the project is a nix project
 function project_is_nix () {
-    return "$([ -e "$PROJECT_BASE_DIR/$1/shell.nix" ])"
+    [ -e "$PROJECT_BASE_DIR/$1/shell.nix" ]
+    return "$?"
 }
 
 function project_dir () {
