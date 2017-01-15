@@ -201,7 +201,7 @@ function check_git () {
         REMOTE=${branches[$LOCAL]}
         if [ "$REMOTE" == "__NULL" ]; then
             FOLLOW=": $MAGENTA$LOCAL$RESET does not track a remote"
-        elif ! git diff --quiet "$LOCAL" "$REMOTE"; then
+        elif ! git diff --quiet "$LOCAL" "$REMOTE" --; then
             FOLLOW=": $MAGENTA$LOCAL$RESET and $MAGENTA$REMOTE$RESET out of sync"
         else
             continue
