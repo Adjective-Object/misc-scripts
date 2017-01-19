@@ -7,7 +7,7 @@ function help () {
 }
 
 if [[ $# -lt 1 ]]; then
-    NAME="mhuan13@gmail.com"
+    NAME="$(git config --get user.email)"
 elif [[ $# -ne 1 ]]; then
     help
     exit 1
