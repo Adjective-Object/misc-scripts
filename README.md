@@ -9,6 +9,8 @@ A collection of one-off scripts & bots
     script to download a stylesheet and inline webfonts as base64 data urls
  - [Git Impact](./script-git-impact):
     script to check the contribitions of a user to a repository
+ - [Rotate-Touchscreen](./script-rotate-touchscreen):
+    script to rotate a screen and mouse input, meant for touchscreen devices
 
 ## Bots
 Continuous processes and scripts meant to be run at regular
