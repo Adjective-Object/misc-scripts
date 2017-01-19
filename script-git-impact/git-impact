@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+
+function help () {
+    echo "
+    usage: $0 [author-email]
+    ";
+}
+
+if [[ $# -lt 1 ]]; then
+    NAME="mhuan13@gmail.com"
+elif [[ $# -ne 1 ]]; then
+    help
+    exit 1
+else
+    NAME=1
+fi
+
+# impact AUTHOR FIELD
+function impact () {
+    IMPACT=$(git log --author="$1" --numstat --pretty=tformat: |\
+        cut -f "$2" |\
+        perl -e 'map {$x += $_} <> and print $x')
+    if [ -z "$IMPACT" ]; then
+        echo "0"
+    else
+        echo "$IMPACT"
+    fi
+}
+
+echo "impact of $NAME: +$(impact $NAME 1)/-$(impact $NAME 2) lines"
+
