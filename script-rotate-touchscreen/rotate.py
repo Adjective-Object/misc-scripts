@@ -39,14 +39,18 @@ def parse_rect(rect_string):
     )
 
 
-def fetch_screens():
-    proc = sp.run(['xrandr'], stdout=sp.PIPE)
+def get_lines(args, err):
+    proc = sp.run(args, stdout=sp.PIPE)
 
     if proc.returncode != 0:
-        print("error fetching screen from xrandr")
+        print("error " + err)
         return {}
 
-    lines = str(proc.stdout).split("\\n")
+    return str(proc.stdout).split("\\n")
+
+
+def fetch_screens():
+    lines = get_lines(["xrandr"], "fetching screens from xrandr")
     screens = {}
     for line in lines:
         if " connected " in line:
@@ -54,6 +58,19 @@ def fetch_screens():
             screens[fields[0]] = parse_rect(fields[2])
 
     return screens
+
+pointer_regex = re.compile(r'.*\\xe2\\x86\\xb3\s+(.+?)\s+\\tid=(\d+)')
+def fetch_pointers():
+    lines = get_lines(["xinput", "list"], "fetching pointers from xinput")
+    pointers = []
+    for line in lines:
+        if ("slave" in line and
+            "pointer" in line and
+            "Virtual core XTEST pointer" not in line):
+            match = pointer_regex.match(line)
+            groups = match.groups()
+            pointers.append((groups[0], int(groups[1])))
+    return pointers
 
 
 def join_screens(screens):
@@ -112,13 +129,21 @@ def rotate_display(device, orientation):
 def transform_touchscreen(device, transform):
     sp.call(['xinput', 'set-prop', device, '140'] + [str(x) for x in transform])
 
+
+def usage():
+    print("""
+    usage: %s [monitor] [orienation]
+
+    [orientation] one of: 'normal', 'inverted', 'left', 'right'
+    [monitor] the name of a monitor (check xrandr for monitor names)
+    """ % sys.argv[0])
+
 def main(argv):
     screen = 'eDP1'
-    touchscreen = 'Atmel Atmel maXTouch Digitizer'
-    touchpad = 'SynPS/2 Synaptics TouchPad'
-    orientation = sys.argv[1]
+    orientation = argv[1]
 
     screens = fetch_screens()
+    pointers = fetch_pointers()
     union = join_screens(screens.values())
 
     if screen not in screens.keys():
@@ -145,8 +170,8 @@ def main(argv):
     )
 
     rotate_display(screen, orientation)
-    transform_touchscreen(touchpad, transform)
-    transform_touchscreen(touchscreen, transform)
+    for pointer in pointers:
+        transform_touchscreen(pointer[0], transform)
 
 if __name__ == "__main__":
     main(sys.argv)
